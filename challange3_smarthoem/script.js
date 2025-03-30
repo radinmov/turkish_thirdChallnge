@@ -1,4 +1,3 @@
-
 const devices = [];
 
 let userSettings = {
@@ -35,6 +34,9 @@ function renderDevices() {
     const deviceList = document.getElementById("device-list");
     deviceList.innerHTML = "";
 
+    // Sort devices from highest to lowest power usage
+    devices.sort((a, b) => b.power - a.power);
+
     devices.forEach((device, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -65,7 +67,7 @@ function toggleDevice(index) {
             Swal.fire({
                 icon: 'error',
                 title: 'You hit the limit!',
-                text: 'The total energy consumption exceeds the limit! You cant turn on this device.',
+                text: 'The total energy consumption exceeds the limit! You can\'t turn on this device.',
               });
             return;
         }
@@ -77,7 +79,7 @@ function toggleDevice(index) {
             devices[index].timer = setTimeout(() => {
                 Swal.fire({
                     title: `Time is up for ${devices[index].name}.`,
-                    text: "We must to close the device.",
+                    text: "We must turn off the device.",
                     icon: "info"
                 });
                 devices[index].isOn = false;
