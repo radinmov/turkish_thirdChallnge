@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home AIO</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Smart Home Management</h1>
+
+    <section id="user-input">
+        <h2>Energy Usage Settings</h2>
+        <label>Maximum Energy Usage (W): </label>
+        <input type="number" id="max-energy" placeholder="For example 1000">
+        
+        <label>Hours Max Usage: </label>
+        <input type="text" id="peak-hours" placeholder="For example 18:00-22:00">
+        
+        <button onclick="saveSettings()">Save Settings</button>
+    </section>
+
+    <section id="add-device">
+        <h2>Add New Device</h2>
+        <label>Device Name: </label>
+        <input type="text" id="device-name" placeholder="For example TV">
+        
+        <label>Usage (W): </label>
+        <input type="number" id="device-power" placeholder="For example 200">
+        
+        <label>Usage Time (minutes): </label>
+        <input type="number" id="usage-time" placeholder="For example 5">
+
+        <button onclick="addDevice()">Add Device</button>
+    </section>
+
+    <section id="devices">
+        <h2>Electrical Devices</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Device Name</th>
+                    <th>Status</th>
+                    <th>Usage (W)</th>
+                    <th>Control</th>
+                </tr>
+            </thead>
+            <tbody id="device-list"></tbody>
+        </table>
+    </section>
+
+    <section id="total">
+        <h2>Total Energy Usage: <span id="total-energy">0</span> W</h2>
+    </section>
+
+    <section id="device-usage-time">
+        <h2>Device Usage Time</h2>
+        <ul id="usage-time-list"></ul>
+    </section>
+
+    <section id="graph">
+        <h2>Energy Usage Chart</h2>
+        <canvas id="energyChart"></canvas>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
