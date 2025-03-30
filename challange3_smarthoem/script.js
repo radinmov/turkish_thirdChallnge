@@ -5,6 +5,27 @@ let userSettings = {
     peakHours: "18:00-22:00"
 };
 
+// Show welcome alert only if the user hasn't disabled it
+function showWelcomeAlert() {
+    if (!localStorage.getItem("hideWelcomeAlert")) {
+        Swal.fire({
+            title: "!Welcome to Smart Home AIO",
+            html: `
+                <p>Manage your devices and monitor energy consumption efficiently.</p>
+                <p>Set energy limits and track real-time usage.</p>
+                <input type="checkbox" id="hide-alert"> <label for="hide-alert">Don't show this again</label>
+            `,
+            icon: "info",
+            confirmButtonText: "OK",
+            didClose: () => {
+                if (document.getElementById("hide-alert").checked) {
+                    localStorage.setItem("hideWelcomeAlert", "true");
+                }
+            }
+        });
+    }
+}
+
 function addDevice() {
     const deviceName = document.getElementById("device-name").value.trim();
     const devicePower = parseInt(document.getElementById("device-power").value.trim()) || 0;
@@ -68,7 +89,7 @@ function toggleDevice(index) {
                 icon: 'error',
                 title: 'You hit the limit!',
                 text: 'The total energy consumption exceeds the limit! You can\'t turn on this device.',
-              });
+            });
             return;
         }
 
@@ -164,6 +185,11 @@ function updateUsageTime() {
         }
     });
 }
+
+// Show the welcome alert when the page loads
+window.onload = function () {
+    showWelcomeAlert();
+};
 
 setInterval(updateUsageTime, 1000);
 renderDevices();
