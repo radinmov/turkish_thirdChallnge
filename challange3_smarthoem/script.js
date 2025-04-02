@@ -2,14 +2,21 @@ const devices = [];
 
 let userSettings = {
     maxEnergy: 2000,
-    peakHours: "18:00-22:00"
+    peakHours: "18:00-22:00" // getting the max usage hours 
 };
 
-// Show welcome alert only if the user hasn't disabled it
+// Display real-time local time
+function displayLocalTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString();
+    document.getElementById("local-time-display").textContent = `Local Time: ${timeString}`;
+}
+
+// Show welcome alert if user has not disabled it
 function showWelcomeAlert() {
     if (!localStorage.getItem("hideWelcomeAlert")) {
         Swal.fire({
-            title: "!Welcome to Smart Home AIO",
+            title: "Welcome to Smart Home AIO!",
             html: `
                 <p>Manage your devices and monitor energy consumption efficiently.</p>
                 <p>Set energy limits and track real-time usage.</p>
@@ -26,6 +33,7 @@ function showWelcomeAlert() {
     }
 }
 
+// Adding a new devices to list
 function addDevice() {
     const deviceName = document.getElementById("device-name").value.trim();
     const devicePower = parseInt(document.getElementById("device-power").value.trim()) || 0;
@@ -40,22 +48,25 @@ function addDevice() {
         name: deviceName,
         power: devicePower,
         isOn: false,
-        usageTime: usageTimeInput ? usageTimeInput * 60 * 1000 : null,
+        usageTime: usageTimeInput ? usageTimeInput * 60 * 1000 : null, // change minutes to milliseconds
         startTime: null,
         timer: null
     });
 
-    renderDevices();
+    renderDevices();  // in here call the function to update ui 
+
+    // Clear input fields after adding the device
     document.getElementById("device-name").value = "";
     document.getElementById("device-power").value = "";
     document.getElementById("usage-time").value = "";
 }
 
+// Render devices UI
 function renderDevices() {
     const deviceList = document.getElementById("device-list");
     deviceList.innerHTML = "";
 
-    // Sort devices from highest to lowest power usage
+    // Sorting devices from highest to lowest power usage
     devices.sort((a, b) => b.power - a.power);
 
     devices.forEach((device, index) => {
@@ -76,10 +87,12 @@ function renderDevices() {
     updateTotalEnergy();
 }
 
+// Toggle a device on or off
 function toggleDevice(index) {
     const currentDevice = devices[index];
 
     if (!currentDevice.isOn) {
+        // Calculate new total energy if the device is turned on
         const newTotalEnergy = devices.reduce((sum, device) => 
             sum + (device.isOn ? device.power : 0), 0
         ) + currentDevice.power;
@@ -96,6 +109,7 @@ function toggleDevice(index) {
         devices[index].isOn = true;
         devices[index].startTime = Date.now();
 
+        // Automatically turn off after the specified usage time
         if (devices[index].usageTime) {
             devices[index].timer = setTimeout(() => {
                 Swal.fire({
@@ -108,13 +122,14 @@ function toggleDevice(index) {
             }, devices[index].usageTime);
         }
     } else {
-        clearTimeout(devices[index].timer);
+        clearTimeout(devices[index].timer); // Cancel the auto-off timer
         devices[index].isOn = false;
     }
 
     renderDevices();
 }
 
+// Energy usage chart
 const ctx = document.getElementById("energyChart").getContext("2d");
 const energyChart = new Chart(ctx, {
     type: "line",
@@ -136,6 +151,7 @@ const energyChart = new Chart(ctx, {
     }
 });
 
+// Update energy usage chart
 function updateChart() {
     const totalEnergy = devices.reduce((sum, device) => sum + (device.isOn ? device.power : 0), 0);
     const time = `${energyChart.data.labels.length}s`;
@@ -151,12 +167,14 @@ function updateChart() {
     energyChart.update();
 }
 
+// Update total energy consumption display
 function updateTotalEnergy() {
     const totalEnergy = devices.reduce((sum, device) => sum + (device.isOn ? device.power : 0), 0);
     document.getElementById("total-energy").textContent = totalEnergy;
     updateChart();
 }
 
+// Save user settings
 function saveSettings() {
     const maxEnergyInput = parseInt(document.getElementById("max-energy").value.trim()) || userSettings.maxEnergy;
     const peakHoursInput = document.getElementById("peak-hours").value.trim() || userSettings.peakHours;
@@ -172,6 +190,7 @@ function saveSettings() {
     });
 }
 
+// Update device usage time
 function updateUsageTime() {
     const usageList = document.getElementById("usage-time-list");
     usageList.innerHTML = "";
@@ -186,10 +205,13 @@ function updateUsageTime() {
     });
 }
 
-// Show the welcome alert when the page loads
+// Run functions on page load
 window.onload = function () {
     showWelcomeAlert();
+    displayLocalTime();
 };
 
+// Update local time every second
+setInterval(displayLocalTime, 1000);
 setInterval(updateUsageTime, 1000);
 renderDevices();
