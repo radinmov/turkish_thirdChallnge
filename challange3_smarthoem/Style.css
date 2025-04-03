@@ -7,7 +7,7 @@ body {
 
 /* Local Time Display */
 #local-time {
-    font-size: 20px;
+    font-size: 1px;
     font-weight: bold;
     background-color: #007BFF;
     color: white;

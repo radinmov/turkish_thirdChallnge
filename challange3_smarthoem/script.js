@@ -2,7 +2,7 @@ const devices = [];
 
 let userSettings = {
     maxEnergy: 2000,
-    peakHours: "18:00-22:00" // getting the max usage hours 
+    peakHours: "18:00-22:00" // Example peak hours
 };
 
 // Display real-time local time
@@ -33,7 +33,7 @@ function showWelcomeAlert() {
     }
 }
 
-// Adding a new devices to list
+// Adding a new device to the list
 function addDevice() {
     const deviceName = document.getElementById("device-name").value.trim();
     const devicePower = parseInt(document.getElementById("device-power").value.trim()) || 0;
@@ -48,12 +48,12 @@ function addDevice() {
         name: deviceName,
         power: devicePower,
         isOn: false,
-        usageTime: usageTimeInput ? usageTimeInput * 60 * 1000 : null, // change minutes to milliseconds
+        usageTime: usageTimeInput ? usageTimeInput * 60 * 1000 : null, // Convert minutes to milliseconds
         startTime: null,
         timer: null
     });
 
-    renderDevices();  // in here call the function to update ui 
+    renderDevices();
 
     // Clear input fields after adding the device
     document.getElementById("device-name").value = "";
@@ -61,13 +61,18 @@ function addDevice() {
     document.getElementById("usage-time").value = "";
 }
 
-// Render devices UI
+// Render devices in the UI
 function renderDevices() {
     const deviceList = document.getElementById("device-list");
     deviceList.innerHTML = "";
 
-    // Sorting devices from highest to lowest power usage
-    devices.sort((a, b) => b.power - a.power);
+    // Sort devices: First by "isOn" status (ON devices first), then by power usage (highest to lowest)
+    devices.sort((a, b) => {
+        if (b.isOn !== a.isOn) {
+            return b.isOn - a.isOn; // ON devices come first
+        }
+        return b.power - a.power; // Higher power devices come first
+    });
 
     devices.forEach((device, index) => {
         const row = document.createElement("tr");
@@ -87,7 +92,7 @@ function renderDevices() {
     updateTotalEnergy();
 }
 
-// Toggle a device on or off
+// Toggle device ON/OFF
 function toggleDevice(index) {
     const currentDevice = devices[index];
 
